@@ -15,8 +15,6 @@
 #
 
 from abc import ABC
-from ollama import Client
-
 from rag.utils import num_tokens_from_string
 
 
@@ -31,14 +29,6 @@ class Base(ABC):
             response_format="text"
         )
         return transcription.text.strip(), num_tokens_from_string(transcription.text.strip())
-
-
-# class GPTSeq2txt(Base):
-#     def __init__(self, key, model_name="whisper-1", base_url="https://api.openai.com/v1"):
-#         if not base_url: base_url = "https://api.openai.com/v1"
-#         self.client = OpenAI(api_key=key, base_url=base_url)
-#         self.model_name = model_name
-
 
 class QWenSeq2txt(Base):
     def __init__(self, key, model_name="paraformer-realtime-8k-v1", **kwargs):
@@ -63,23 +53,3 @@ class QWenSeq2txt(Base):
             return ans, num_tokens_from_string(ans)
 
         return "**ERROR**: " + result.message, 0
-
-
-class OllamaSeq2txt(Base):
-    def __init__(self, key, model_name, lang="Chinese", **kwargs):
-        self.client = Client(host=kwargs["base_url"])
-        self.model_name = model_name
-        self.lang = lang
-
-
-# class AzureSeq2txt(Base):
-#     def __init__(self, key, model_name, lang="Chinese", **kwargs):
-#         self.client = AzureOpenAI(api_key=key, azure_endpoint=kwargs["base_url"], api_version="2024-02-01")
-#         self.model_name = model_name
-#         self.lang = lang
-#
-#
-# class XinferenceSeq2txt(Base):
-#     def __init__(self, key, model_name="", base_url=""):
-#         self.client = OpenAI(api_key="xxx", base_url=base_url)
-#         self.model_name = model_name
