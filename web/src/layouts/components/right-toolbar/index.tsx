@@ -1,5 +1,5 @@
 import { useTranslate } from '@/hooks/commonHooks';
-import { DownOutlined, GithubOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, MenuProps, Space } from 'antd';
 import camelCase from 'lodash/camelCase';
 import React from 'react';
@@ -18,14 +18,14 @@ const Circle = ({ children, ...restProps }: React.PropsWithChildren) => {
   );
 };
 
-const handleGithubCLick = () => {
-  window.open('https://github.com/infiniflow/ragflow', 'target');
-};
+// const handleGithubCLick = () => {
+//   window.open('https://github.com/infiniflow/ragflow', 'target');
+// };
 
 const RightToolBar = () => {
   const { t } = useTranslate('common');
   const changeLanguage = useChangeLanguage();
-  const { language = 'en' } = useSelector(
+  const { language = 'zh' } = useSelector(
     (state) => state.settingModel.userInfo,
   );
 
@@ -49,9 +49,9 @@ const RightToolBar = () => {
             <DownOutlined />
           </Space>
         </Dropdown>
-        <Circle>
+        {/* <Circle>
           <GithubOutlined onClick={handleGithubCLick} />
-        </Circle>
+        </Circle> */}
         {/* <Circle>
           <MonIcon />
         </Circle> */}

@@ -123,6 +123,7 @@ class TaskService(CommonService):
 
 def queue_tasks(doc, bucket, name):
     def new_task():
+        # 3A87:通常用在嵌套函数中，允许内部函数访问并修改外部函数的变量
         nonlocal doc
         return {
             "id": get_uuid(),

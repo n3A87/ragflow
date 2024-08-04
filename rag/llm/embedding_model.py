@@ -18,13 +18,13 @@ from typing import Optional
 import  threading
 import requests
 from huggingface_hub import snapshot_download
-from openai.lib.azure import AzureOpenAI
+#from openai.lib.azure import AzureOpenAI
 from zhipuai import ZhipuAI
 import os
 from abc import ABC
 from ollama import Client
 import dashscope
-from openai import OpenAI
+#from openai import OpenAI
 from FlagEmbedding import FlagModel
 import torch
 import numpy as np
@@ -90,84 +90,84 @@ class DefaultEmbedding(Base):
         return self._model.encode_queries([text]).tolist()[0], token_count
 
 
-class OpenAIEmbed(Base):
-    def __init__(self, key, model_name="text-embedding-ada-002",
-                 base_url="https://api.openai.com/v1"):
-        if not base_url:
-            base_url = "https://api.openai.com/v1"
-        self.client = OpenAI(api_key=key, base_url=base_url)
-        self.model_name = model_name
-
-    def encode(self, texts: list, batch_size=32):
-        texts = [truncate(t, 8196) for t in texts]
-        res = self.client.embeddings.create(input=texts,
-                                            model=self.model_name)
-        return np.array([d.embedding for d in res.data]
-                        ), res.usage.total_tokens
-
-    def encode_queries(self, text):
-        res = self.client.embeddings.create(input=[truncate(text, 8196)],
-                                            model=self.model_name)
-        return np.array(res.data[0].embedding), res.usage.total_tokens
-
-
-class AzureEmbed(Base):
-    def __init__(self, key, model_name, **kwargs):
-        self.client = AzureOpenAI(api_key=key, azure_endpoint=kwargs["base_url"], api_version="2024-02-01")
-        self.model_name = model_name
-
-class BaiChuanEmbed(OpenAIEmbed):
-    def __init__(self, key,
-                 model_name='Baichuan-Text-Embedding',
-                 base_url='https://api.baichuan-ai.com/v1'):
-        if not base_url:
-            base_url = "https://api.baichuan-ai.com/v1"
-        super().__init__(key, model_name, base_url)
+# class OpenAIEmbed(Base):
+#     def __init__(self, key, model_name="text-embedding-ada-002",
+#                  base_url="https://api.openai.com/v1"):
+#         if not base_url:
+#             base_url = "https://api.openai.com/v1"
+#         self.client = OpenAI(api_key=key, base_url=base_url)
+#         self.model_name = model_name
+#
+#     def encode(self, texts: list, batch_size=32):
+#         texts = [truncate(t, 8196) for t in texts]
+#         res = self.client.embeddings.create(input=texts,
+#                                             model=self.model_name)
+#         return np.array([d.embedding for d in res.data]
+#                         ), res.usage.total_tokens
+#
+#     def encode_queries(self, text):
+#         res = self.client.embeddings.create(input=[truncate(text, 8196)],
+#                                             model=self.model_name)
+#         return np.array(res.data[0].embedding), res.usage.total_tokens
 
 
-class QWenEmbed(Base):
-    def __init__(self, key, model_name="text_embedding_v2", **kwargs):
-        dashscope.api_key = key
-        self.model_name = model_name
+# class AzureEmbed(Base):
+#     def __init__(self, key, model_name, **kwargs):
+#         self.client = AzureOpenAI(api_key=key, azure_endpoint=kwargs["base_url"], api_version="2024-02-01")
+#         self.model_name = model_name
 
-    def encode(self, texts: list, batch_size=10):
-        import dashscope
-        try:
-            res = []
-            token_count = 0
-            texts = [truncate(t, 2048) for t in texts]
-            for i in range(0, len(texts), batch_size):
-                resp = dashscope.TextEmbedding.call(
-                    model=self.model_name,
-                    input=texts[i:i + batch_size],
-                    text_type="document"
-                )
-                embds = [[] for _ in range(len(resp["output"]["embeddings"]))]
-                for e in resp["output"]["embeddings"]:
-                    embds[e["text_index"]] = e["embedding"]
-                res.extend(embds)
-                token_count += resp["usage"]["total_tokens"]
-            return np.array(res), token_count
-        except Exception as e:
-            raise Exception("Account abnormal. Please ensure it's on good standing to use QWen's "+self.model_name)
-        return np.array([]), 0
+# class BaiChuanEmbed(OpenAIEmbed):
+#     def __init__(self, key,
+#                  model_name='Baichuan-Text-Embedding',
+#                  base_url='https://api.baichuan-ai.com/v1'):
+#         if not base_url:
+#             base_url = "https://api.baichuan-ai.com/v1"
+#         super().__init__(key, model_name, base_url)
 
-    def encode_queries(self, text):
-        try:
-            resp = dashscope.TextEmbedding.call(
-                model=self.model_name,
-                input=text[:2048],
-                text_type="query"
-            )
-            return np.array(resp["output"]["embeddings"][0]
-                            ["embedding"]), resp["usage"]["total_tokens"]
-        except Exception as e:
-            raise Exception("Account abnormal. Please ensure it's on good standing to use QWen's "+self.model_name)
-        return np.array([]), 0
+
+# class QWenEmbed(Base):
+#     def __init__(self, key, model_name="text_embedding_v2", **kwargs):
+#         dashscope.api_key = key
+#         self.model_name = model_name
+#
+#     def encode(self, texts: list, batch_size=10):
+#         import dashscope
+#         try:
+#             res = []
+#             token_count = 0
+#             texts = [truncate(t, 2048) for t in texts]
+#             for i in range(0, len(texts), batch_size):
+#                 resp = dashscope.TextEmbedding.call(
+#                     model=self.model_name,
+#                     input=texts[i:i + batch_size],
+#                     text_type="document"
+#                 )
+#                 embds = [[] for _ in range(len(resp["output"]["embeddings"]))]
+#                 for e in resp["output"]["embeddings"]:
+#                     embds[e["text_index"]] = e["embedding"]
+#                 res.extend(embds)
+#                 token_count += resp["usage"]["total_tokens"]
+#             return np.array(res), token_count
+#         except Exception as e:
+#             raise Exception("Account abnormal. Please ensure it's on good standing to use QWen's "+self.model_name)
+#         return np.array([]), 0
+#
+#     def encode_queries(self, text):
+#         try:
+#             resp = dashscope.TextEmbedding.call(
+#                 model=self.model_name,
+#                 input=text[:2048],
+#                 text_type="query"
+#             )
+#             return np.array(resp["output"]["embeddings"][0]
+#                             ["embedding"]), resp["usage"]["total_tokens"]
+#         except Exception as e:
+#             raise Exception("Account abnormal. Please ensure it's on good standing to use QWen's "+self.model_name)
+#         return np.array([]), 0
 
 
 class ZhipuEmbed(Base):
-    def __init__(self, key, model_name="embedding-2", **kwargs):
+    def __init__(self, key, model_name="embedding-3", **kwargs):
         self.client = ZhipuAI(api_key=key)
         self.model_name = model_name
 

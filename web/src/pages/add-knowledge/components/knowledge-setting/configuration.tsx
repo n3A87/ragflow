@@ -53,12 +53,12 @@ const ConfigurationForm = ({ form }: { form: FormInstance }) => {
       <Form.Item
         label={t('language')}
         name="language"
-        initialValue={'English'}
+        initialValue={'Chinese'}
         rules={[{ required: true, message: t('languageMessage') }]}
       >
         <Select placeholder={t('languagePlaceholder')}>
-          <Option value="English">{t('english')}</Option>
           <Option value="Chinese">{t('chinese')}</Option>
+          <Option value="English">{t('english')}</Option>
         </Select>
       </Form.Item>
       <Form.Item

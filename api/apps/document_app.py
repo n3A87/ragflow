@@ -40,7 +40,6 @@ from api.utils.api_utils import get_json_result
 from rag.utils.minio_conn import MINIO
 from api.utils.file_utils import filename_type, thumbnail
 from api.utils.web_utils import html2pdf, is_valid_url
-from api.utils.web_utils import html2pdf, is_valid_url
 
 
 @manager.route('/upload', methods=['POST'])
@@ -346,6 +345,7 @@ def run():
                 info["progress_msg"] = ""
                 info["chunk_num"] = 0
                 info["token_num"] = 0
+            # 3A87:更新document表的知识库文件数据
             DocumentService.update_by_id(id, info)
             # if str(req["run"]) == TaskStatus.CANCEL.value:
             tenant_id = DocumentService.get_tenant_id(id)
@@ -359,6 +359,7 @@ def run():
                 e, doc = DocumentService.get_by_id(id)
                 doc = doc.to_dict()
                 doc["tenant_id"] = tenant_id
+                # TODO:发生了什么
                 bucket, name = File2DocumentService.get_minio_address(doc_id=doc["id"])
                 queue_tasks(doc, bucket, name)
 

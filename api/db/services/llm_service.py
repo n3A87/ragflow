@@ -207,6 +207,14 @@ class LLMBundle(object):
                 "Can't update token usage for {}/IMAGE2TEXT".format(self.tenant_id))
         return txt
 
+    def transcription(self, audio):
+        txt, used_tokens = self.mdl.transcription(audio)
+        if not TenantLLMService.increase_usage(
+                self.tenant_id, self.llm_type, used_tokens):
+            database_logger.error(
+                "Can't update token usage for {}/SEQUENCE2TXT".format(self.tenant_id))
+        return txt
+
     def chat(self, system, history, gen_conf):
         txt, used_tokens = self.mdl.chat(system, history, gen_conf)
         if not TenantLLMService.increase_usage(

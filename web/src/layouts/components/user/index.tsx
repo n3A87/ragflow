@@ -21,7 +21,7 @@ const App: React.FC = () => {
       className={styles.clickAvailable}
       src={
         userInfo.avatar ??
-        'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
+        'https://tse1-mm.cn.bing.net/th/id/OIP-C.78pmdTPZ5_uUKjSvd-mAnwHaHa?rs=1&pid=ImgDetMain'
       }
     />
   );

@@ -1,30 +1,33 @@
 ragflow:
-  host: 0.0.0.0
+  host: 127.0.0.1
   http_port: 9380
 mysql:
   name: 'rag_flow'
   user: 'root'
   password: 'infini_rag_flow'
-  host: 'mysql'
-  port: 3306
+  host: '127.0.0.1'
+  port: 5455
   max_connections: 100
   stale_timeout: 30
 minio:
   user: 'rag_flow'
   password: 'infini_rag_flow'
-  host: 'minio:9000'
+  host: '127.0.0.1:9000'
 es:
-  hosts: 'http://es01:9200'
+  hosts: 'http://127.0.0.1:9200'
   username: 'elastic'
   password: 'infini_rag_flow'
 redis:
   db: 1
   password: 'infini_rag_flow'
-  host: 'redis:6379'
+  host: '127.0.0.1:6379'
+#user_default_llm:
+#  factory: 'Tongyi-Qianwen'
+#  api_key: 'sk-b0f9ec943276474db970059018cdc4fe'
+#  base_url: 'https://dashscope.aliyuncs.com/compatible-mode/v1'
 user_default_llm:
-  factory: 'Tongyi-Qianwen'
-  api_key: 'sk-xxxxxxxxxxxxx'
-  base_url: ''
+  factory: 'ZHIPU-AI'
+  api_key: '20c653432ba0e0d45f3bdf385422641b.xSjg9IVJ7uEgQmhS'
 oauth:
   github:
     client_id: xxxxxxxxxxxxxxxxxxxxxxxxx

@@ -14,7 +14,7 @@ export default {
       create: '創建',
       edit: '編輯',
       upload: '上傳',
-      english: '英語',
+      //english: '英語',
       chinese: '簡體中文',
       traditionalChinese: '繁體中文',
       language: '語言',

@@ -67,6 +67,7 @@ def get_rag_python_directory(*args):
 
 
 def get_home_cache_dir():
+    # TODO:把这里.ragflow换个名字
     dir = os.path.join(os.path.expanduser('~'), ".ragflow")
     try:
         os.mkdir(dir)

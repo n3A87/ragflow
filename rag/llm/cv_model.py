@@ -13,13 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-from openai.lib.azure import AzureOpenAI
+#from openai.lib.azure import AzureOpenAI
 from zhipuai import ZhipuAI
 import io
 from abc import ABC
 from ollama import Client
-from PIL import Image
-from openai import OpenAI
+#from PIL import Image
+#from openai import OpenAI
 import os
 import base64
 from io import BytesIO
@@ -67,85 +67,85 @@ class Base(ABC):
         ]
 
 
-class GptV4(Base):
-    def __init__(self, key, model_name="gpt-4-vision-preview", lang="Chinese", base_url="https://api.openai.com/v1"):
-        if not base_url: base_url="https://api.openai.com/v1"
-        self.client = OpenAI(api_key=key, base_url=base_url)
-        self.model_name = model_name
-        self.lang = lang
+# class GptV4(Base):
+#     def __init__(self, key, model_name="gpt-4-vision-preview", lang="Chinese", base_url="https://api.openai.com/v1"):
+#         if not base_url: base_url="https://api.openai.com/v1"
+#         self.client = OpenAI(api_key=key, base_url=base_url)
+#         self.model_name = model_name
+#         self.lang = lang
+#
+#     def describe(self, image, max_tokens=300):
+#         b64 = self.image2base64(image)
+#         prompt = self.prompt(b64)
+#         for i in range(len(prompt)):
+#             for c in prompt[i]["content"]:
+#                 if "text" in c: c["type"] = "text"
+#
+#         res = self.client.chat.completions.create(
+#             model=self.model_name,
+#             messages=prompt,
+#             max_tokens=max_tokens,
+#         )
+#         return res.choices[0].message.content.strip(), res.usage.total_tokens
 
-    def describe(self, image, max_tokens=300):
-        b64 = self.image2base64(image)
-        prompt = self.prompt(b64)
-        for i in range(len(prompt)):
-            for c in prompt[i]["content"]:
-                if "text" in c: c["type"] = "text"
-
-        res = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=prompt,
-            max_tokens=max_tokens,
-        )
-        return res.choices[0].message.content.strip(), res.usage.total_tokens
-
-class AzureGptV4(Base):
-    def __init__(self, key, model_name, lang="Chinese", **kwargs):
-        self.client = AzureOpenAI(api_key=key, azure_endpoint=kwargs["base_url"], api_version="2024-02-01")
-        self.model_name = model_name
-        self.lang = lang
-
-    def describe(self, image, max_tokens=300):
-        b64 = self.image2base64(image)
-        prompt = self.prompt(b64)
-        for i in range(len(prompt)):
-            for c in prompt[i]["content"]:
-                if "text" in c: c["type"] = "text"
-
-        res = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=prompt,
-            max_tokens=max_tokens,
-        )
-        return res.choices[0].message.content.strip(), res.usage.total_tokens
+# class AzureGptV4(Base):
+#     def __init__(self, key, model_name, lang="Chinese", **kwargs):
+#         self.client = AzureOpenAI(api_key=key, azure_endpoint=kwargs["base_url"], api_version="2024-02-01")
+#         self.model_name = model_name
+#         self.lang = lang
+#
+#     def describe(self, image, max_tokens=300):
+#         b64 = self.image2base64(image)
+#         prompt = self.prompt(b64)
+#         for i in range(len(prompt)):
+#             for c in prompt[i]["content"]:
+#                 if "text" in c: c["type"] = "text"
+#
+#         res = self.client.chat.completions.create(
+#             model=self.model_name,
+#             messages=prompt,
+#             max_tokens=max_tokens,
+#         )
+#         return res.choices[0].message.content.strip(), res.usage.total_tokens
 
 
-class QWenCV(Base):
-    def __init__(self, key, model_name="qwen-vl-chat-v1", lang="Chinese", **kwargs):
-        import dashscope
-        dashscope.api_key = key
-        self.model_name = model_name
-        self.lang = lang
-
-    def prompt(self, binary):
-        # stupid as hell
-        tmp_dir = get_project_base_directory("tmp")
-        if not os.path.exists(tmp_dir):
-            os.mkdir(tmp_dir)
-        path = os.path.join(tmp_dir, "%s.jpg" % get_uuid())
-        Image.open(io.BytesIO(binary)).save(path)
-        return [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "image": f"file://{path}"
-                    },
-                    {
-                        "text": "请用中文详细描述一下图中的内容，比如时间，地点，人物，事情，人物心情等，如果有数据请提取出数据。" if self.lang.lower() == "chinese" else
-                        "Please describe the content of this picture, like where, when, who, what happen. If it has number data, please extract them out.",
-                    },
-                ],
-            }
-        ]
-
-    def describe(self, image, max_tokens=300):
-        from http import HTTPStatus
-        from dashscope import MultiModalConversation
-        response = MultiModalConversation.call(model=self.model_name,
-                                               messages=self.prompt(image))
-        if response.status_code == HTTPStatus.OK:
-            return response.output.choices[0]['message']['content'][0]["text"], response.usage.output_tokens
-        return response.message, 0
+# class QWenCV(Base):
+#     def __init__(self, key, model_name="qwen-vl-chat-v1", lang="Chinese", **kwargs):
+#         import dashscope
+#         dashscope.api_key = key
+#         self.model_name = model_name
+#         self.lang = lang
+#
+#     def prompt(self, binary):
+#         # stupid as hell
+#         tmp_dir = get_project_base_directory("tmp")
+#         if not os.path.exists(tmp_dir):
+#             os.mkdir(tmp_dir)
+#         path = os.path.join(tmp_dir, "%s.jpg" % get_uuid())
+#         Image.open(io.BytesIO(binary)).save(path)
+#         return [
+#             {
+#                 "role": "user",
+#                 "content": [
+#                     {
+#                         "image": f"file://{path}"
+#                     },
+#                     {
+#                         "text": "请用中文详细描述一下图中的内容，比如时间，地点，人物，事情，人物心情等，如果有数据请提取出数据。" if self.lang.lower() == "chinese" else
+#                         "Please describe the content of this picture, like where, when, who, what happen. If it has number data, please extract them out.",
+#                     },
+#                 ],
+#             }
+#         ]
+#
+#     def describe(self, image, max_tokens=300):
+#         from http import HTTPStatus
+#         from dashscope import MultiModalConversation
+#         response = MultiModalConversation.call(model=self.model_name,
+#                                                messages=self.prompt(image))
+#         if response.status_code == HTTPStatus.OK:
+#             return response.output.choices[0]['message']['content'][0]["text"], response.usage.output_tokens
+#         return response.message, 0
 
 
 class Zhipu4V(Base):
@@ -187,21 +187,21 @@ class OllamaCV(Base):
             return "**ERROR**: " + str(e), 0
 
 
-class XinferenceCV(Base):
-    def __init__(self, key, model_name="", lang="Chinese", base_url=""):
-        self.client = OpenAI(api_key="xxx", base_url=base_url)
-        self.model_name = model_name
-        self.lang = lang
-
-    def describe(self, image, max_tokens=300):
-        b64 = self.image2base64(image)
-
-        res = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=self.prompt(b64),
-            max_tokens=max_tokens,
-        )
-        return res.choices[0].message.content.strip(), res.usage.total_tokens
+# class XinferenceCV(Base):
+#     def __init__(self, key, model_name="", lang="Chinese", base_url=""):
+#         self.client = OpenAI(api_key="xxx", base_url=base_url)
+#         self.model_name = model_name
+#         self.lang = lang
+#
+#     def describe(self, image, max_tokens=300):
+#         b64 = self.image2base64(image)
+#
+#         res = self.client.chat.completions.create(
+#             model=self.model_name,
+#             messages=self.prompt(b64),
+#             max_tokens=max_tokens,
+#         )
+#         return res.choices[0].message.content.strip(), res.usage.total_tokens
 
 
 class LocalCV(Base):

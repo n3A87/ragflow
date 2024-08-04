@@ -114,7 +114,7 @@ default_llm = {
     }
 }
 LLM = get_base_config("user_default_llm", {})
-LLM_FACTORY = LLM.get("factory", "Tongyi-Qianwen")
+LLM_FACTORY = LLM.get("factory", "ZHIPU-AI")
 LLM_BASE_URL = LLM.get("base_url")
 
 if LLM_FACTORY not in default_llm:

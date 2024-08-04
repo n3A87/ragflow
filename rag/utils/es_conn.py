@@ -148,6 +148,62 @@ class ESConnection:
                 self.conn()
 
         return res
+    # def bulk(self, df, idx_nm=None):
+    #     ids, acts = {}, []
+    #     for d in df:
+    #         id = d["id"] if "id" in d else d["_id"]
+    #         ids[id] = copy.deepcopy(d)
+    #         ids[id]["_index"] = self.idxnm if idx_nm is None else idx_nm
+    #         if "id" in d:
+    #             del d["id"]
+    #         if "_id" in d:
+    #             del d["_id"]
+    #
+    #         # 构建 update 操作，包含元数据和数据
+    #         action = {
+    #             "update": {
+    #                 "_id": id,
+    #                 "_index": ids[id]["_index"],
+    #                 "retry_on_conflict": 100,
+    #                 "doc": d,  # 直接将数据作为 doc 键的值
+    #                 "doc_as_upsert": True  # 确保如果文档不存在则创建它
+    #             }
+    #         }
+    #         acts.append(action)
+    #
+    #     res = []
+    #     for _ in range(100):
+    #         try:
+    #             if elasticsearch.__version__[0] < 8:
+    #                 r = self.es.bulk(
+    #                     index=(self.idxnm if idx_nm is None else idx_nm),
+    #                     body=acts,
+    #                     refresh=False,
+    #                     timeout="600s")
+    #             else:
+    #                 r = self.es.bulk(index=(self.idxnm if idx_nm is None else idx_nm),
+    #                                  operations=acts,
+    #                                  refresh=False,
+    #                                  timeout="600s")
+    #
+    #             # 检查是否有错误
+    #             if any("error" in item for item in r.get("items", [])):
+    #                 return res  # 如果有错误，直接返回结果列表
+    #
+    #             # 处理错误信息
+    #             for item in r["items"]:
+    #                 if "error" in item.get("update", {}):
+    #                     res.append(f"{item['update']['_id']}: {item['update']['error']}")
+    #
+    #             return res
+    #         except Exception as e:
+    #             es_logger.warn(f"Fail to bulk: {e}")
+    #             if "Timeout" in str(e) or "time out" in str(e).lower():
+    #                 time.sleep(3)
+    #                 continue
+    #             self.conn()
+    #
+    #     return res
 
     def bulk4script(self, df):
         ids, acts = {}, []

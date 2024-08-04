@@ -23,8 +23,8 @@ dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
 
 const AntLanguageMap = {
-  en: enUS,
   zh: zhCN,
+  en: enUS,
   'zh-TRADITIONAL': zh_HK,
 };
 
@@ -34,7 +34,7 @@ type Locale = ConfigProviderProps['locale'];
 
 const RootProvider = ({ children }: React.PropsWithChildren) => {
   const getLocale = (lng: string) =>
-    AntLanguageMap[lng as keyof typeof AntLanguageMap] ?? enUS;
+    AntLanguageMap[lng as keyof typeof AntLanguageMap] ?? zhCN;
 
   const [locale, setLocal] = useState<Locale>(getLocale(storage.getLanguage()));
 
